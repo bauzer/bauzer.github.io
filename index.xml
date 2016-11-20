@@ -7,8 +7,49 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>bauzer</copyright>
-    <lastBuildDate>Sun, 20 Nov 2016 13:09:03 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 20 Nov 2016 20:36:13 +0900</lastBuildDate>
     <atom:link href="https://bauzer.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>CentOS7でvm.swappinessを設定</title>
+      <link>https://bauzer.github.io/201611/002/</link>
+      <pubDate>Sun, 20 Nov 2016 20:36:13 +0900</pubDate>
+      
+      <guid>https://bauzer.github.io/201611/002/</guid>
+      <description>&lt;p&gt;まずは現在の設定値を確認します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;sudo sysctl vm.swappiness
+vm.swappiness = 30
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CentOS6では&lt;code&gt;/etc/sysctl.conf&lt;/code&gt; に設定を保存してやればよかったのですが、CentOS7ではtunedでカーネルパラメータが上書きされます。&lt;/p&gt;
+
+&lt;p&gt;ということで、tunedでどのプロファイルが適用されているか確認します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;sudo tuned-adm active
+Current active profile: virtual-guest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;プロファイルの設定内容を確認します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;sudo grep vm.swappiness /usr/lib/tuned/virtual-guest/tuned.conf
+vm.swappiness = 30
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;プロファイル&lt;code&gt;/usr/lib/tuned/virtual-guest/tuned.conf&lt;/code&gt;の&lt;code&gt;vm.swappiness&lt;/code&gt;を変更し、tunedを再起動します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;sudo systemctl restart tuned
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;設定が反映されたか確認します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;sudo sysctl vm.swappiness
+vm.swappiness = 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;無事反映できました。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Hugo - Hosting on GitHub Pages</title>
