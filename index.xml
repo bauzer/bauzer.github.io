@@ -7,7 +7,132 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>bauzer</copyright>
+    <lastBuildDate>Sun, 20 Nov 2016 13:09:03 +0900</lastBuildDate>
     <atom:link href="https://bauzer.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Hugo - Hosting on GitHub Pages</title>
+      <link>https://bauzer.github.io/20161120/</link>
+      <pubDate>Sun, 20 Nov 2016 13:09:03 +0900</pubDate>
+      
+      <guid>https://bauzer.github.io/20161120/</guid>
+      <description>
+
+&lt;h3 id=&#34;はじめに&#34;&gt;はじめに&lt;/h3&gt;
+
+&lt;p&gt;blogを&lt;a href=&#34;https://ghost.org&#34;&gt;ghost&lt;/a&gt;で運用していたんですが、&lt;a href=&#34;https://pages.github.com&#34;&gt;GitHub Pages&lt;/a&gt;でホスティングできることを小耳にはさみやってみることにしました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://pages.github.com&#34;&gt;GitHub Pages&lt;/a&gt;は&lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;というリポジトリを作成してmasterブランチにhtmlファイルを配置すればよいだけというお手軽さです。ソース管理もできるしこれを使わない手はなさそうです。&lt;/p&gt;
+
+&lt;p&gt;htmlファイルの生成はgolangだという理由で&lt;a href=&#34;https://gohugo.io&#34;&gt;Hugo&lt;/a&gt;を使うことにしました。生成速度が速いとかエントリ数が増えても動作が軽いとか色々利点はあるようです。&lt;/p&gt;
+
+&lt;h3 id=&#34;githubブランチの作成&#34;&gt;GitHubブランチの作成&lt;/h3&gt;
+
+&lt;p&gt;2つのリポジトリを作成します。
+1. &lt;a href=&#34;https://pages.github.com&#34;&gt;GitHub Pages&lt;/a&gt;用リポジトリ(&lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;)
+1. blog更新用リポジトリ(&lt;code&gt;&amp;lt;username_hugo&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;blog更新用リポジトリでHugoを実行し、生成されたpublicディレクトリと&lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;リポジトリを&lt;code&gt;git submodule&lt;/code&gt;を使って連携させます。&lt;/p&gt;
+
+&lt;h3 id=&#34;道具の準備&#34;&gt;道具の準備&lt;/h3&gt;
+
+&lt;p&gt;Bash on Windows環境下にgolangとHugoをインストールします。&lt;/p&gt;
+
+&lt;h4 id=&#34;install-golang&#34;&gt;Install golang&lt;/h4&gt;
+
+&lt;p&gt;Bash on Windows環境でapt-getすると古いgolangがインストールされてしまいますので、公式から最新版をダウンロードしインストールします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;curl -L -O https://storage.googleapis.com/golang/go1.7.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.7.3.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=/usr/local/go
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;install-hugo&#34;&gt;Install Hugo&lt;/h4&gt;
+
+&lt;p&gt;公式からパッケージをダウンロードしてインストールします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;curl -L -O https://github.com/spf13/hugo/releases/download/v0.17/hugo_0.17-64bit.deb
+sudo dpkg -i hugo_0.17-64bit.deb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;blogサイトの作成&#34;&gt;blogサイトの作成&lt;/h3&gt;
+
+&lt;p&gt;hugoコマンドを使って作成します。テーマは&lt;a href=&#34;http://themes.gohugo.io&#34;&gt;Hugo Themes Site&lt;/a&gt;から選びます。ここでは&lt;a href=&#34;https://github.com/rakuishi/hugo-zen&#34;&gt;Hugo Zen&lt;/a&gt;
+をインストールします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;hugo new site &amp;lt;username&amp;gt;_hugo
+cd &amp;lt;username&amp;gt;_hugo
+
+# install theme(hugo-zen)
+git clone https://github.com/rakuishi/hugo-zen.git themes/hugo-zen
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;リポジトリの更新&#34;&gt;リポジトリの更新&lt;/h3&gt;
+
+&lt;p&gt;ひとまずリポジトリを更新し、&lt;a href=&#34;https://pages.github.com&#34;&gt;GitHub Pages&lt;/a&gt;用リポジトリ(&lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;)とsubmoduleで連携させます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# add remote
+git init
+git add .
+git commit -m ‘First commit.’
+git remote add origin https://github.com/&amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;_hugo.git
+
+git submodule add -b master https://github.com/&amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;_hugo.git public
+
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;blogエントリの作成&#34;&gt;blogエントリの作成&lt;/h3&gt;
+
+&lt;p&gt;hugoコマンドで作成し、mdファイルを編集します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;hugo new hello.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;ローカルサーバーでの確認&#34;&gt;ローカルサーバーでの確認&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;hugo server --theme=hugo-zen --buildDrafts --watch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;github-pagesへデプロイ&#34;&gt;GitHub Pagesへデプロイ&lt;/h3&gt;
+
+&lt;p&gt;デプロイ用のシェルスクリプトを作成し、実行します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;cat &amp;lt;&amp;lt;&#39;_EOT_&#39; &amp;gt; deploy.sh
+
+#!/bin/bash
+
+echo -e &amp;quot;\033[0;32mDeploying updates to GitHub...\033[0m&amp;quot;
+
+# Build the project.
+hugo -t hugo-zen # if using a theme, replace by `hugo -t &amp;lt;yourtheme&amp;gt;`
+
+# Go To Public folder
+cd public
+# Add changes to git.
+git add -A
+
+# Commit changes.
+msg=&amp;quot;rebuilding site `date`&amp;quot;
+if [ $# -eq 1 ]
+  then msg=&amp;quot;$1&amp;quot;
+fi
+git commit -m &amp;quot;$msg&amp;quot;
+
+# Push source and build repos.
+git push origin master
+
+# Come Back
+cd ..
+_EOT_
+
+chmod +x deploy.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで https://&lt;username&gt;.gihub.io/ に反映されました。&lt;/p&gt;
+</description>
+    </item>
     
   </channel>
 </rss>
