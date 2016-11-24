@@ -7,8 +7,72 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja</language>
     <copyright>bauzer</copyright>
-    <lastBuildDate>Sun, 20 Nov 2016 20:36:13 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 24 Nov 2016 22:46:26 +0900</lastBuildDate>
     <atom:link href="https://bauzer.github.io/201611/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>正しさについて考えさせられた</title>
+      <link>https://bauzer.github.io/201611/003/</link>
+      <pubDate>Thu, 24 Nov 2016 22:46:26 +0900</pubDate>
+      
+      <guid>https://bauzer.github.io/201611/003/</guid>
+      <description>
+
+&lt;h3 id=&#34;ことのはじまり&#34;&gt;ことのはじまり&lt;/h3&gt;
+
+&lt;p&gt;職場で偉い人と雑談してる時に&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;世の中わりと適当でもやっていけるんだから、あまりカツカツするのもアレな感じでよくないのかもしれないねえ&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;という話がありました。&lt;/p&gt;
+
+&lt;p&gt;多分に共感できるところがあって「ですよね～」なんて相槌を打ってたらとあるソースコードを見せられまして……&lt;/p&gt;
+
+&lt;h3 id=&#34;とあるソースコード&#34;&gt;とあるソースコード&lt;/h3&gt;
+
+&lt;p&gt;それはクライアントからソケットでデータを受け取ってゴニョゴニョするC言語で実装されたプログラムでした。&lt;/p&gt;
+
+&lt;p&gt;仕様は聞かずコードを眺めているとrecv(2)の返り値が期待値と異なっていた場合はロスト扱いするという実装です。&lt;/p&gt;
+
+&lt;p&gt;微妙な空白の時間が生まれました。&lt;/p&gt;
+
+&lt;p&gt;recvは確か受け取ったバイト数が返り値だから0になるか-1(error)になるまで呼び出さないといけなかったんじゃ…などと遠く消えそうな記憶を辿りよせるも不安だったので&lt;a href=&#34;https://linuxjm.osdn.jp/html/LDP_man-pages/man2/recv.2.html&#34;&gt;Man page of RECV&lt;/a&gt;を確認しました。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;recv(), recvfrom(), recvmsg() コールは、 ソケットからメッセージを受け取るのに使用される。 これらはコネクションレス型のソケットにも接続指向&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;中略&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;これらの三つのシステムコールはいずれも、成功した場合にはメッセージの長さを返す。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;中略&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ソケットに受け取るメッセージが存在しなかった場合、 受信用のコールはメッセージが到着するまで待つ。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;記憶は正しかったようです。&lt;/p&gt;
+
+&lt;p&gt;これで上手く動いているのか確認したところ、動いてはいるけどロストも多いそうだよとおっしゃっていました。&lt;/p&gt;
+
+&lt;h3 id=&#34;正しさとは何か&#34;&gt;正しさとは何か&lt;/h3&gt;
+
+&lt;p&gt;ロストを許容するというのが仕様制限として謳われているため、ロストの原因を如何を問わずロストはロストなのです。これは仕様制限としているのだから問題ない。ロストの多寡が問題視されていないという現状も含めこれでよいということでした。&lt;/p&gt;
+
+&lt;p&gt;この事例が示唆しているのは、実装として間違っていたとしてもその正しさを決めるのは別のレイヤにあるということです。言い換えれば、このプログラムが拾ってくる情報の価値がこのプログラムの正しさを定義する尺度なのです。&lt;/p&gt;
+
+&lt;h3 id=&#34;まとめのようなもの&#34;&gt;まとめのようなもの&lt;/h3&gt;
+
+&lt;p&gt;プログラマの端くれとしてはまったく腑に落ちない話で、プログラミング上の問題が発生しないコードを予算内に収めて書くことがプログラマとしてのあり方、正しさだと信じています。しかしその正しさも異なるレイヤで見れば必ずしも正しいとは限りません。悪く言えばいい加減な実装でも費用対効果があると判断されるのならそれでいいのだからプログラミング上の正しさなんてどうでもいいんだと強弁することもできます。&lt;/p&gt;
+
+&lt;p&gt;しかし、もしロストが多いことが問題となった場合はどうでしょうか。ネットワーク上の問題でロストしているのか、プログラミング上の問題でロストしているのか分析する必要が出てくるかもしれません。その時、この実装には問題があると判断できるプログラマでありたいと思います。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>CentOS7でvm.swappinessを設定</title>
